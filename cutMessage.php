@@ -1,17 +1,37 @@
 <?php
+/**
+* 将长的主贴分割为一个主贴与若干个回帖
+*/
 Class longPostToShort{
 	private $message, $per_counts, $start;
-	public $retCode;
+	//处理后的message
+	private $retMsg;
 
 	public function __construct($message, $per_counts){
+		mb_internal_encoding('UTF-8');
+
 		$this->message = $message;
 		$this->per_counts = $per_counts;
 		$this->start = 0;
-		mb_internal_encoding('UTF-8');
 	}
 
     	//截取字符串到数组, 默认标签无嵌套
     	public function cutMessage(){
+    		//传入的message为空
+    		if($this->message == ''){
+    			return $this->retData(-2);
+    		}
+
+    		//传入的per_counts小于100
+    		if($this->per_counts < 100){
+    			return $this->retData(-1);
+    		}
+
+    		//传入的message长度不大于per_counts值
+    		if(mb_strlen($this->message) <= $this->per_counts){
+    			return $this->retData(0);
+    		}
+
     		static $ret_arr = array();
     		$per_message = mb_substr($this->message, $this->start, $this->per_counts);
 	
@@ -69,7 +89,8 @@ Class longPostToShort{
     			}
     		}
 	
-    		return $ret_arr;
+    		$this->retMsg = $ret_arr;
+    		return $this->retData(1);
     	}
 	
     	//返回逆序获取到的第一个特殊字符
@@ -114,6 +135,27 @@ Class longPostToShort{
     		return array(
     				'code' => 0
     			       );
+    	}
+
+
+    	private function retData($code){
+    		switch ($code) {
+    			case '-2':
+    			case '-1':
+    			case '0':
+    				return array(
+    					       'code' => 0,
+    					       'message' => $this->message,
+    					       );
+    				break;
+    			case '1':
+    				return array(
+    					       'code' => 1,
+    					       'message' => $this->retMsg,
+    					       );
+    				break;
+    		}
+    		exit;
     	}
 }
 
