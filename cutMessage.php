@@ -14,7 +14,7 @@ Class longPostToShort{
 	private $arr_special_tags;
 
 	//处理后的message
-	private $retMsg;
+	private $retMsg = '';
 
 	//定义默认的截断字符串的长度
 	const PER_COUNT = 300;
@@ -82,7 +82,6 @@ Class longPostToShort{
 					 	 '[align]',
 					 	 '[u]',
 					 	 );
-
 	}
 
 	public function reverseCut(){
@@ -101,9 +100,19 @@ Class longPostToShort{
 		//存储已经连续匹配的次数，用以之后主动闭合部分标签
 		static $times = 0;
 
+		//如果传入的数据为空
+		if(empty($this->message)){
+			return $this->retData(0);
+		}
+
+		//如果传入的字符串长度比每段截取长度短直接返回传入的数据
+		if(mb_strlen($this->message) <= $this->per_counts){
+			return $this->retData(0);
+		}
+
 		//超过一定次数，且未闭合标签全部是特殊标签的话特殊处理，主动闭合
 		if($times >2 && $this->isAllSpecialTags($arr_tags_begin)){
-			echo 'times out'."\n";
+			//先主动闭合临时变量中的字符串
 			$str_tmp = $this->closeBeginTags($arr_tags_begin, $str_tmp);
 
 			//次数清零
@@ -193,11 +202,11 @@ Class longPostToShort{
 					$arr_tags_begin = $arr_tags_not_match = array();
 					$arr_message[] = $str_tmp;
 				}
-	
+
 				$this->retMsg = $arr_message;
-	
-				var_dump($arr_message);
 			}
+
+			return $this->retData(1);
 		}
 
 
@@ -252,9 +261,8 @@ Class longPostToShort{
     	}
 
 
-    	private function retData($code){
+    	private function retData($code = 0){
     		switch ($code) {
-    			case '-2':
     			case '-1':
     			case '0':
     				return array(
@@ -269,7 +277,6 @@ Class longPostToShort{
     					       );
     				break;
     		}
-    		exit;
     	}
 }
 
@@ -300,9 +307,13 @@ Class longPostToShort{
 　　这就是林氏双姝中小的那个了。李思浅[font]？狐[color]狸精[u]！”[b]大家多[/b]留言[/u]，[qqattach]我全部加精，[/color]衬得[/eeattach]她大家升级，好有[/font]推荐票仔细打量眼前的小姑娘：嘴唇浅[font]？狐[color]狸精[u]！”[b]大家多微嘟、杏眼桃腮，非常漂亮，是那种娇憨可爱的类型。
 　　这位大家多微嘟、杏眼桃腮，非常漂亮位大家多微嘟、杏眼桃腮，非常漂多微嘟、杏眼桃腮，非常漂亮，是那种娇憨可爱的多微嘟、杏眼桃腮，非常漂亮位大家多微嘟、杏眼桃腮，非常漂多微嘟、杏眼桃腮，非常漂亮，是那种娇憨可爱的多微嘟、杏眼桃腮，非常漂亮位大家多微嘟、杏眼桃腮，非常漂多微嘟、杏眼桃腮，非常漂亮，是那种娇憨可爱的类型林二;';
 
-    // $str = '成什么样[img]……“她是谁[font]？狐[color]狸精[u]！”[b]大家多[/b]留言[/u]，[qqattach]我全[/color]部加[/font]精全[/img]部加精什么娇成全部全部加精什么娇成全部，[/color]衬得[/eeattach]她大家升级，好有[/font]推荐票……端木……端木……端[/img]木娇成什么全部加精娇成全部加精什么娇成全部加精什么全部加精娇成什么娇成什全部加精全部加精么样木娇';
+    // $str = '成什么样[img]……“她是谁[font]？狐[color]狸精[u]！”[b]大家多[/b]留言[/u]，[qqattach]我全[/color]部加[/font]精全[/img]娇';
 
     $test = new longPostToShort($str, 200);
-    $test->reverseCut();
+    $arr_message = $test->reverseCut();
+    foreach($arr_message['message'] as $key => $val){
+    	echo $key.": \n".$val."\n";
+    }
+    // var_dump($test->reverseCut());
     // var_dump($test->cutMessage());
 
