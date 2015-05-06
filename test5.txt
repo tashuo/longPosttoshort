@@ -5,3 +5,4 @@ rrrrrrcccccrrrrrr
 confilict is here
 ccccrrrrcdd
 merge test
+ooo
