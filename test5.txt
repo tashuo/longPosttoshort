@@ -1,7 +1,7 @@
 test55
 lululu
 
-rrrrrrrrrrrr
+rrrrrrcccccrrrrrr
 confilict is here
-ccccccc
+ccccrrrrccc
 merge test
